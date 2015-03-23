@@ -8,12 +8,25 @@ public class RomanEmperorSorter implements ActionListener
    JFrame frame=new JFrame("Roman Emperor Sorter");
    JPanel container=new JPanel();
    //CardLayout cl=new CardLayout();
-      
+   
+   GridLayout gl=new GridLayout(1,2);   
    JPanel selectScreen=new JPanel();
-   JLabel introText=new JLabel("<html><center>Welcome to the Roman Emperor Sorter!<br>Include emperors to the end of what year?<br>(Note: year must be at least 14 CE.)</center></html>");
+   JLabel introText=new JLabel("<html><center>Welcome to the Roman Emperor Sorter!<br>Please choose how you want to select the emperors to be included.</center></html>");
+   JTabbedPane methodPane=new JTabbedPane();
+   JPanel yearPanel=new JPanel();
+   JLabel yearText=new JLabel("<html><center>Include emperors up to the end of what year?<br>(Note: Year must be at least 14 CE.)</center></html>");
    JTextField yearField=new JTextField();
+   JPanel yearSubmitPanel=new JPanel();
    JButton submitButton=new JButton("Submit");
    JLabel errorText=new JLabel("Not a valid year, please try again.");
+   JPanel eraPanel=new JPanel();
+   JLabel eraText=new JLabel("Include emperors up to the end of what era?");
+   String[]eras={"Julio-Claudian Dynasty (68)","Year of the Four Emperors (69)","Flavian Dynasty (96)","Nerva-Antonine Dynasty (192)","Year of the Five Emperors (193)",
+      "Severan Dynasty (235)","Crisis of the 3rd Century (285)","Tetrarchy (324)","Constantinian Dynasty (363)","Valentinian Dynasty (392)","Theodosian Dynasty (457)",
+      "Fall of the West (476)","Leonid Dynasty (518)","Justinian Dynasty (602)","Heraclian Dynasty (695)","20 Years' Anarchy (717)","Isaurian Dynasty (802)","Nikephorian Dynasty (813)",
+      "Amorian Dynasty (867)","Macedonian Dynasty (1056)","Doukid Dynasty (1081)","Komnenid Dynasty (1185)","Angelid Dynasty (1204)","Laskarid Dynasty (1261)","Fall of Constantinople (1453)"};
+   JComboBox eraBox=new JComboBox(eras);
+   JButton submitButton2=new JButton("Submit");
    
    JPanel askScreen=new JPanel();
    JLabel question=new JLabel("Who wore the purple better?");
@@ -28,42 +41,104 @@ public class RomanEmperorSorter implements ActionListener
    
    private static EmperorList emperors;
    private int N,sz,lo,mid,hi,i,j,k;
+   private int boxYear=68;
    private String[] aux;
    private boolean continueFlag=true;
+   private int[]eraYears={68,69,96,192,193,235,285,324,363,392,457,476,518,602,695,717,802,813,867,1056,1081,1185,1204,1261,1453};
    
    public RomanEmperorSorter()
    {      
       //container.setLayout(cl);
+      gl.setHgap(40);
       selectScreen.setLayout(new BoxLayout(selectScreen,BoxLayout.PAGE_AXIS));
       askScreen.setLayout(new BoxLayout(askScreen,BoxLayout.PAGE_AXIS));
-      choices.setLayout(new BoxLayout(choices,BoxLayout.LINE_AXIS));
+      choices.setLayout(gl);
       resultScreen.setLayout(new BoxLayout(resultScreen,BoxLayout.PAGE_AXIS));
+      yearPanel.setLayout(new BorderLayout());
+      yearSubmitPanel.setLayout(new BorderLayout());
+      eraPanel.setLayout(new BorderLayout());
       
       selectScreen.add(introText);
       introText.setAlignmentX(Component.CENTER_ALIGNMENT);
       selectScreen.add(Box.createRigidArea(new Dimension(0,15)));
-      selectScreen.add(yearField);
-      yearField.setMaximumSize(new Dimension(Integer.MAX_VALUE,yearField.getPreferredSize().height));
-      selectScreen.add(Box.createRigidArea(new Dimension(0,15)));
-      selectScreen.add(submitButton);
+      selectScreen.add(methodPane);
+      methodPane.setAlignmentX(Component.CENTER_ALIGNMENT);
+      
+      methodPane.addTab("By Year",yearPanel);
+      yearPanel.add(yearText,BorderLayout.NORTH);
+      yearText.setHorizontalAlignment(JLabel.CENTER);
+      //yearPanel.add(Box.createRigidArea(new Dimension(0,15)));
+      yearPanel.add(yearField,BorderLayout.CENTER);
+      //yearField.setMaximumSize(new Dimension(Integer.MAX_VALUE,yearField.getPreferredSize().height));
+      //yearPanel.add(Box.createRigidArea(new Dimension(0,15)));
+      yearPanel.add(yearSubmitPanel,BorderLayout.SOUTH);
+      yearSubmitPanel.add(submitButton,BorderLayout.CENTER);
       submitButton.addActionListener(this);
-      submitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-      selectScreen.add(errorText);
-      errorText.setAlignmentX(Component.CENTER_ALIGNMENT);
+      submitButton.setAlignmentX(SwingConstants.CENTER);
+      yearSubmitPanel.add(errorText,BorderLayout.SOUTH);
+      errorText.setHorizontalAlignment(JLabel.CENTER);
       errorText.setVisible(false);
+      
+      methodPane.addTab("By Era",eraPanel);
+      eraPanel.add(eraText,BorderLayout.NORTH);
+      eraText.setHorizontalAlignment(JLabel.CENTER);
+      //eraPanel.add(Box.createRigidArea(new Dimension(0,15)));
+      eraPanel.add(eraBox,BorderLayout.CENTER);
+      eraBox.setAlignmentX(SwingConstants.CENTER);
+      eraBox.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                String eraChoice=(String)eraBox.getSelectedItem();
+                for (int i=0;i<eras.length;i++)
+                {
+                  if (eraChoice.equals(eras[i]))
+                  {
+                     boxYear=eraYears[i];
+                     break;
+                  }
+                }
+            }});
+      //eraPanel.add(Box.createRigidArea(new Dimension(0,15)));
+      eraPanel.add(submitButton2,BorderLayout.SOUTH);
+      submitButton2.setAlignmentX(SwingConstants.CENTER);
+      submitButton2.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+               emperors=new EmperorList(boxYear);
+               randomize();
+               
+               N=emperors.getLength();
+               sz=1;
+               lo=0;
+               mid=lo+sz-1;
+               hi=Math.min(lo+sz+sz-1, N-1);
+               i = lo;
+               j = mid+1;
+               k=lo;
+               
+               aux=new String[N];
+               for (int k = lo; k <= hi; k++)
+                  aux[k] = emperors.getEmperor(k);
+                  
+               choiceA.setText(emperors.getEmperor(0));
+               choiceB.setText(emperors.getEmperor(1));
+               
+               container.add(askScreen);
+               container.remove(selectScreen);
+               frame.pack();
+            }});
       
       askScreen.add(question);
       question.setAlignmentX(Component.CENTER_ALIGNMENT);
       askScreen.add(Box.createRigidArea(new Dimension(0,15)));
       askScreen.add(choices);
+      askScreen.setPreferredSize(selectScreen.getPreferredSize());
       
-      choices.add(Box.createHorizontalGlue());
+      //choices.add(Box.createHorizontalGlue());
       choices.add(choiceA);
       choiceA.addActionListener(this);
-      choices.add(Box.createRigidArea(new Dimension(25,0)));
+      //choices.add(Box.createRigidArea(new Dimension(25,0)));
       choices.add(choiceB);
       choiceB.addActionListener(this);
-      choices.add(Box.createHorizontalGlue());
+      //choices.add(Box.createHorizontalGlue());
       
       resultScreen.setPreferredSize(new Dimension(250,600));
       resultScreen.add(resultText);
@@ -85,7 +160,7 @@ public class RomanEmperorSorter implements ActionListener
       frame.setResizable(false);
       frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.pack();
-		frame.setVisible(true);    
+		frame.setVisible(true); 
             
    }
    
@@ -114,7 +189,6 @@ public class RomanEmperorSorter implements ActionListener
                
             choiceA.setText(emperors.getEmperor(0));
             choiceB.setText(emperors.getEmperor(1));
-            frame.pack();
             
             container.add(askScreen);
             container.remove(selectScreen);
@@ -147,7 +221,6 @@ public class RomanEmperorSorter implements ActionListener
          {
             choiceA.setText(aux[i]);
             choiceB.setText(aux[j]);
-            frame.pack();
          }
             
    	}
@@ -160,7 +233,6 @@ public class RomanEmperorSorter implements ActionListener
          {
             choiceA.setText(aux[i]);
             choiceB.setText(aux[j]);
-            frame.pack();
             emperors.setEmperor(k,aux[j++]);
             k++;
             blockResolve();
@@ -172,7 +244,6 @@ public class RomanEmperorSorter implements ActionListener
          {
             choiceA.setText(aux[i]);
             choiceB.setText(aux[j]);
-            frame.pack();
          }
       }
       
