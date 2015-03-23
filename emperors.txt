@@ -1,3 +1,165 @@
 Augustus
 Tiberius
 Caligula
+Claudius
+Nero
+Galba
+Otho
+Vitellius
+Vespasian
+Titus
+Domitian
+Nerva
+Trajan
+Hadrian
+Antoninus Pius
+Marcus Aurelius
+Lucius Verus
+Commodus
+Pertinax
+Didius Julianus
+Septimius Severus
+Caracalla
+Geta
+Macrinus
+Elagabalus
+Severus Alexander
+Maximinus Thrax
+Gordian I
+Gordian II
+Pupienus
+Balbinus
+Gordian III
+Philip "the Arab"
+Trajan Decius
+Hostilian
+Trebonianus Gallus
+Aemilian
+Valerian
+Gallienus
+Claudius Gothicus
+Quintillus
+Aurelian
+Tacitus
+Florian
+Probus
+Carus
+Numerian
+Carinus
+Diocletian
+Maximian
+Constantius I Chlorus
+Galerius
+Severus II
+Constantine I
+Maxentius
+Maximinus Daia
+Licinius I
+Constantine II
+Constantius II
+Constans I
+Vetranio
+Julian "the Apostate"
+Jovian
+Valentinian I
+Valens
+Gratian
+Valentinian II
+Theodosius I
+Arcadius
+Honorius
+Theodosius II
+Constantine III
+Constantius III
+Joannes
+Valentinian III
+Marcian
+Petronius Maximus
+Avitus
+Leo I "the Thracian"
+Majorian
+Libius Severus
+Anthemius
+Olybrius
+Glycerius
+Leo II "the Little"
+Julius Nepos
+Zeno
+Basiliscus
+Romulus Augustulus
+Anastasius I
+Justin I
+Justinian I "the Great"
+Justin II
+Tiberius II Constantine
+Maurice
+Phocas
+Heraclius
+Constantine III
+Heraklonas
+Constans II
+Constantine IV "the Bearded"
+Justinian II "the Slit-nosed"
+Leontios
+Tiberius III Apsimar
+Philippikos Bardanes
+Anastasios II
+Theodosios III
+Leo III "the Isaurian"
+Constantine V "the Dung-named"
+Artabasdos
+Leo IV "the Khazar"
+Constantine VI
+Irene of Athens
+Nikephoros I "the Logothete"
+Staurakios
+Michael I Rangabe
+Leo V "the Armenian"
+Michael II "the Amorian"
+Theophilos
+Michael III "the Drunkard"
+Basil I "the Macedonian"
+Leo VI "the Wise"
+Alexander
+Constantine VII "the Purple-born"
+Romanos I Lekapenos
+Romanos II "the Purple-born"
+Nikephoros II Phokas
+John I Tzimiskes
+Basil II "the Bulgar-Slayer"
+Constantine VIII "the Purple-born"
+Zoe "the Purple-born"
+Romanos III Argyros
+Michael IV "the Paphlagonian"
+Michael V "the Caulker"
+Theodora
+Constantine IX Monomachos
+Michael VI Bringas "Stratiotikos"
+Isaac I Komnenos
+Constantine X Doukas
+Michael VII Doukas
+Romanos IV Diogenes
+Nikephoros III Botaneiates
+Alexios I Komnenos
+John II Komnenos
+Manuel I Komnenos
+Alexios II Komnenos
+Andronikos I Komnenos
+Isaac II Angelos
+Alexios III Angelos
+Alexios IV Angelos
+Alexios V Doukas
+Theodore I Laskaris
+John III Doukas Vatatzes
+Theodore II Laskaris
+John IV Laskaris
+Michael VIII Palaiologos
+Andronikos II Palaiologos
+Andronikos III Palaiologos
+John V Palaiologos
+John VI Kantakouzenos
+Andronikos IV Palaiologos
+John VII Palaiologos
+Manuel II Palaiologos
+John VIII Palaiologos
+Constantine XI Palaiologos

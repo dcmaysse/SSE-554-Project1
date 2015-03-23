@@ -1,60 +1,212 @@
-/* RomanEmperorSorter
-   This program can be broken down into four main functions:
-      1. Prompts user for a year and constructs an EmperorList object based on it
-      2. Randomizes the EmperorList
-      3. Performs a Bottom-up (Iterative) MergeSort, with user input serving as comparator
-      4. Prints the final ordered list
-   Code for selectAndSort, copy, and merge adapted from http://algs4.cs.princeton.edu/lectures/22Mergesort.pdf.
-*/
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 import java.util.*;
 
-public class RomanEmperorSorter
+public class RomanEmperorSorter implements ActionListener
 {
-   private static EmperorList emperors;
-   private static Scanner s=new Scanner(System.in);
+   JFrame frame=new JFrame("Roman Emperor Sorter");
+   JPanel container=new JPanel();
+   //CardLayout cl=new CardLayout();
+      
+   JPanel selectScreen=new JPanel();
+   JLabel introText=new JLabel("<html><center>Welcome to the Roman Emperor Sorter!<br>Include emperors to the end of what year?<br>(Note: year must be at least 14 CE.)</center></html>");
+   JTextField yearField=new JTextField();
+   JButton submitButton=new JButton("Submit");
+   JLabel errorText=new JLabel("Not a valid year, please try again.");
    
-   public static void main(String[]args)
-   {
-      System.out.println("Welcome to the Roman Emperor Sorter!");
-      System.out.println("Include emperors to the end of what year (CE)?\n(Note: Year must be at least 14, when Tiberius, the second emperor, ascended to the throne.)");
-      finalYearPrompt();
-      randomize();
-      selectAndSort();
-      printRank();
+   JPanel askScreen=new JPanel();
+   JLabel question=new JLabel("Who wore the purple better?");
+   JPanel choices=new JPanel();
+   JButton choiceA=new JButton();
+   JButton choiceB=new JButton();
+   
+   JPanel resultScreen=new JPanel();
+   JLabel resultText=new JLabel("Here is your final ranking.");
+   JScrollPane scroller=new JScrollPane();
+   JButton returnButton=new JButton("Return");
+   
+   private static EmperorList emperors;
+   private int N,sz,lo,mid,hi,i,j,k;
+   private String[] aux;
+   private boolean continueFlag=true;
+   
+   public RomanEmperorSorter()
+   {      
+      //container.setLayout(cl);
+      selectScreen.setLayout(new BoxLayout(selectScreen,BoxLayout.PAGE_AXIS));
+      askScreen.setLayout(new BoxLayout(askScreen,BoxLayout.PAGE_AXIS));
+      choices.setLayout(new BoxLayout(choices,BoxLayout.LINE_AXIS));
+      resultScreen.setLayout(new BoxLayout(resultScreen,BoxLayout.PAGE_AXIS));
+      
+      selectScreen.add(introText);
+      introText.setAlignmentX(Component.CENTER_ALIGNMENT);
+      selectScreen.add(Box.createRigidArea(new Dimension(0,15)));
+      selectScreen.add(yearField);
+      yearField.setMaximumSize(new Dimension(Integer.MAX_VALUE,yearField.getPreferredSize().height));
+      selectScreen.add(Box.createRigidArea(new Dimension(0,15)));
+      selectScreen.add(submitButton);
+      submitButton.addActionListener(this);
+      submitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+      selectScreen.add(errorText);
+      errorText.setAlignmentX(Component.CENTER_ALIGNMENT);
+      errorText.setVisible(false);
+      
+      askScreen.add(question);
+      question.setAlignmentX(Component.CENTER_ALIGNMENT);
+      askScreen.add(Box.createRigidArea(new Dimension(0,15)));
+      askScreen.add(choices);
+      
+      choices.add(Box.createHorizontalGlue());
+      choices.add(choiceA);
+      choiceA.addActionListener(this);
+      choices.add(Box.createRigidArea(new Dimension(25,0)));
+      choices.add(choiceB);
+      choiceB.addActionListener(this);
+      choices.add(Box.createHorizontalGlue());
+      
+      resultScreen.setPreferredSize(new Dimension(250,600));
+      resultScreen.add(resultText);
+      resultText.setAlignmentX(Component.CENTER_ALIGNMENT);
+      resultScreen.add(Box.createRigidArea(new Dimension(0,15)));
+      resultScreen.add(scroller);
+      scroller.setAlignmentX(Component.CENTER_ALIGNMENT);
+      resultScreen.add(Box.createRigidArea(new Dimension(0,15)));
+      resultScreen.add(returnButton);
+      returnButton.addActionListener(this);
+      returnButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+      
+      container.add(selectScreen);
+      /*container.add(askScreen,"2");
+      container.add(resultScreen,"3");*/
+      //cl.show(container,"1");
+      
+      frame.add(container);
+      frame.setResizable(false);
+      frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.pack();
+		frame.setVisible(true);    
+            
    }
    
-   //Promopts the user for int to create EmperorList object and handles erroneous inputs.
-   private static void finalYearPrompt()
+   public void actionPerformed(ActionEvent e)
    {
-      //Handles cases where input is not an integer.
-      while (!s.hasNextInt())
+      if (e.getSource()==submitButton)
       {
-         System.out.println("Not a valid year, try again.");
-         s.nextLine();
+   		String year=yearField.getText();
+         if (isValidYear(year))
+         {
+            emperors=new EmperorList(Integer.parseInt(year));
+            randomize();
+            
+            N=emperors.getLength();
+            sz=1;
+            lo=0;
+            mid=lo+sz-1;
+            hi=Math.min(lo+sz+sz-1, N-1);
+            i = lo;
+            j = mid+1;
+            k=lo;
+            
+            aux=new String[N];
+            for (int k = lo; k <= hi; k++)
+               aux[k] = emperors.getEmperor(k);
+               
+            choiceA.setText(emperors.getEmperor(0));
+            choiceB.setText(emperors.getEmperor(1));
+            frame.pack();
+            
+            container.add(askScreen);
+            container.remove(selectScreen);
+            frame.pack();
+            //cl.show(container,"2");
+            errorText.setVisible(false);
+            yearField.setText("");
+         }
+         else
+         {
+   		   errorText.setVisible(true);
+            frame.pack();
+         }
       }
-      int finalYr=s.nextInt();
       
-      //Negative numbers are invalid and there would only be 1 emperor for comparison between 0 and 14 CE.
-      if (finalYr>=0&&finalYr<14)
+      else if (e.getSource()==choiceA)
       {
-         System.out.println("Too early! Please enter a year after 14 CE.");
-         finalYearPrompt();
-      }
+         if (k>hi)
+            loopResolve();
+         else
+         {
+            emperors.setEmperor(k,aux[i++]);
+            k++;
+            blockResolve();
+         }
+         
+         if (k>hi)
+            loopResolve();
+         if (continueFlag)
+         {
+            choiceA.setText(aux[i]);
+            choiceB.setText(aux[j]);
+            frame.pack();
+         }
+            
+   	}
       
-      //Handles negative number input.
-      else if (finalYr<0)
+      else if (e.getSource()==choiceB)
       {
-         System.out.println("Not a valid year, try again.");
-         finalYearPrompt();
+         if (k>hi)
+            loopResolve();
+         else
+         {
+            choiceA.setText(aux[i]);
+            choiceB.setText(aux[j]);
+            frame.pack();
+            emperors.setEmperor(k,aux[j++]);
+            k++;
+            blockResolve();
+         }
+         
+         if (k>hi)
+            loopResolve();
+         if (continueFlag)
+         {
+            choiceA.setText(aux[i]);
+            choiceB.setText(aux[j]);
+            frame.pack();
+         }
       }
       
-      //Initializes EmperorList if input is valid.
-      else
-         emperors= new EmperorList(finalYr);
+      else if (e.getSource()==returnButton)
+      {
+         continueFlag=true;
+         container.add(selectScreen);
+         container.remove(resultScreen);
+         frame.pack();
+         //cl.show(container,"1");
+         yearField.requestFocusInWindow();
+      }
+   }
+   
+   protected static boolean isValidYear(String year)
+   {
+      Scanner s=new Scanner(year);
+      boolean isValidYear=true;
+      if (!s.hasNext())
+         return false;
+      while (s.hasNext()&&isValidYear==true)
+      {
+         isValidYear=s.hasNextInt();
+         s.next();
+      }
+      if (isValidYear==true&&Integer.parseInt(year)<14)
+      {
+         isValidYear=false;
+      }
+      return isValidYear;
    }
    
    //Randomizes the EmperorList by generating two random indexes of the EmperorList and swapping their contents.
-   private static void randomize()
+   private void randomize()
    {
       String temp;
       Random r=new Random();
@@ -73,38 +225,60 @@ public class RomanEmperorSorter
       }
    }
    
-	// Bottom-up merge sort.
-	private static void selectAndSort()
+   private void loopResolve()
    {
-      int N = emperors.getLength();
-      String[] aux = new String[N];
+      lo+=sz+sz;
+      if (lo>=N-sz)
+      {
+         sz=sz+sz;
+         if (sz>=N)
+         {
+            continueFlag=false;
+            createTables();
+            container.add(resultScreen);
+            container.remove(askScreen);
+            frame.pack();
+            //cl.show(container,"3");
+         }
+         else 
+         {
+            lo=0;
+            mid=lo+sz-1;
+            hi=Math.min(lo+sz+sz-1, N-1);
+            for (int k = lo; k <= hi; k++)
+               aux[k] = emperors.getEmperor(k);
+            i = lo;
+            j = mid+1;
+            k=lo;
+            blockResolve();
+            
+         }
+      }
       
-      //Nested loop which divides the array into chunks of size sz for merging.
-      for (int sz = 1; sz < N; sz = sz+sz)
-         for (int lo = 0; lo < N-sz; lo += sz+sz)
-            copy(aux, lo, lo+sz-1, Math.min(lo+sz+sz-1, N-1));
+      else
+      {
+         mid=lo+sz-1;
+         hi=Math.min(lo+sz+sz-1, N-1);
+         for (int k = lo; k <= hi; k++)
+            aux[k] = emperors.getEmperor(k);
+         i = lo;
+         j = mid+1;
+         k=lo;
+         blockResolve();
+         
+      }
    }
    
-   //Copies elements from the subarrays into the helper array.   
-   private static void copy(String[] aux, int lo, int mid, int hi)
+   private void blockResolve()
    {
-      for (int k = lo; k <= hi; k++)
-         aux[k] = emperors.getEmperor(k);
-      int i = lo, j = mid+1, k=lo;
-      sort(aux,lo,mid,hi,i,j,k);
-   }
-   
-   //Performs the actual sorting of the subarrays. In most implementations it is combined with the previous
-      //method. However, for simplicity and because of a recursive call, it is its own method.
-   private static void sort(String[]aux, int lo, int mid, int hi, int i, int j, int k)
-   {
-      while (k <= hi)
+      while (k <= hi&&(i>mid||j>hi))
       {
          //If the left half is sorted, the rest of the right half will be copied over.
          if (i > mid)
          {
             emperors.setEmperor(k,aux[j++]);
             k++;
+            
          }
          
          //If the right half is sorted, the rest of the left half will be copied over.
@@ -112,41 +286,34 @@ public class RomanEmperorSorter
          {
             emperors.setEmperor(k,aux[i++]);
             k++;
-         }
-         
-         //Handles comparison cases.
-         else
-         {
-            System.out.println("Who wore the purple better, A) "+aux[i]+" or B) "+aux[j]+"?");
-            String answer=s.next();
-            if (answer.equals("A"))
-            {
-               emperors.setEmperor(k,aux[i++]);
-               k++;
-            }
-            else if (answer.equals("B"))
-            {
-               emperors.setEmperor(k,aux[i++]);
-               k++;
-            }
             
-            //The recursive call which caused the split from copy.
-            else
-            {
-               System.out.println("Invalid input, try again.");
-               sort(aux,lo,mid,hi,i,j,k);
-            }
-         } 
+         }
       }
    }
    
-   //Prints the EmperorList in ranked form.   
-   private static void printRank()
+   public void createTables()
    {
-      System.out.println("Final Ranking:");
-      for (int i=0; i<emperors.getLength(); i++)
+      String[]columnNames={"Rank","Emperor"};
+      Object[][]data=new Object[emperors.getLength()][2];
+      for (int i=0;i<emperors.getLength();i++)
       {
-         System.out.println((i+1)+") "+emperors.getEmperor(i));
+         data[i][0]=i+1;
+         data[i][1]=emperors.getEmperor(i);
       }
-    }   
+      JTable rankTable=new JTable(data,columnNames);
+      scroller.setViewportView(rankTable);
+      frame.pack();
+   }
+      
+   public static void main(String[] args)
+   {
+		SwingUtilities.invokeLater(new Runnable()
+      {
+			@Override
+			public void run()
+         {
+				new RomanEmperorSorter();
+			}
+		});
+   }
 }

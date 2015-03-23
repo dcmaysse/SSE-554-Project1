@@ -27,13 +27,13 @@ public class EmperorList
        try 
        {
           Scanner inFile = new Scanner(new File("years.txt"));
-          token=inFile.next();
+          token=inFile.nextLine();
           
           // While loop for reading, terminates once either the final entry or a year later than the input is reached.
           while ((Integer.parseInt(token)!=-1)&&(Integer.parseInt(token)<=finalYr))
           {
             empCount++;
-            token=inFile.next();
+            token=inFile.nextLine();
           }
           inFile.close();
        }
@@ -51,7 +51,7 @@ public class EmperorList
           
           for (int i=0;i<emperors.length;i++)
           {
-            emperors[i]=inFile1.next();
+            emperors[i]=inFile1.nextLine();
           }
           inFile1.close();
        }
